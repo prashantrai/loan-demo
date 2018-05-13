@@ -228,7 +228,7 @@ public class LoanApp {
 				fileWriter.append(String.valueOf(id));
                 fileWriter.append(COMMA_DELIMITER);
                 fileWriter.append(String.valueOf(expected_yield));
-                fileWriter.append(NEW_LINE_SEPARATOR);
+                fileWriter.append(NEW_LINE_SEPARATOR);   
 				
 			}
 				
