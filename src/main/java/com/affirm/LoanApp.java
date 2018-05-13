@@ -34,31 +34,21 @@ public class LoanApp {
 	
 	public static int pickFacility(float default_likelihood, String state, float amount, float interest_rate) {
 		
-		/*
-		 * selection logic:
-		 * 1. default_likelihood should be lower than facility max_default_likelihood
-		 * 2. state should not be banned_state
-		 * 3. amount should be lower than facility amount
-		 * 4. order by facility amount and interest rate
-		 * 
-		 * to pick the first facility available		 
-		 * * */
+		Connection c = null;
+		int facility_id = 0;
 		
+		//--Pick the first available facility	
 		StringBuilder sb = new StringBuilder();
 		sb.append(" select 	a.id as facility_id, a.amount as amount, a.interest_rate as facility_interest_rate, a.expected_yield as expected_yield ");
 		sb.append(" from facilities a, banks b, covenants c WHERE ");
 		sb.append(" a.bank_id = b.id 	");
 		sb.append(" AND a.bank_id = c.bank_id "); 
 		sb.append(" AND a.id = c.facility_id "); 
-		sb.append(" AND c.max_default_likelihood >= ? "); 
-		sb.append(" AND c.banned_state<>?  ");
-		sb.append(" AND a.amount >= ?  ");
-		sb.append(" AND a.interest_rate <=? "); 
-		sb.append(" ORDER BY a.amount, a.interest_rate ");		
-		
-
-		Connection c = null;
-		int facility_id = 0;
+		sb.append(" AND c.max_default_likelihood >= ? ");  	//--default_likelihood should be lower than facility's max_default_likelihood
+		sb.append(" AND c.banned_state<>?  ");				//--state should not be banned_state
+		sb.append(" AND a.amount >= ?  ");					//--amount should be lower than facility amount
+		sb.append(" AND a.interest_rate <=? "); 			
+		sb.append(" ORDER BY a.amount, a.interest_rate ");	
 		
 		try{
 			
@@ -70,7 +60,7 @@ public class LoanApp {
 			stmt.setFloat(4, interest_rate);
 			ResultSet rs = stmt.executeQuery();
 			
-			String sql = "UPDATE facilities set amount = ?, expected_yield = ? where id =?";
+			String sql = "UPDATE facilities SET amount = ?, expected_yield = ? WHERE id =?";
 			PreparedStatement stmt2 = c.prepareStatement(sql);
 			
 			while (rs.next()) {
@@ -90,7 +80,6 @@ public class LoanApp {
 			
 		} catch (SQLException e) {
 			System.err.println("Error in pickFacility:: "+e);
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
