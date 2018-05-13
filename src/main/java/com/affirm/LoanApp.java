@@ -32,73 +32,8 @@ public class LoanApp {
 		System.out.println("Loan assignment completed.");
 	}
 	
-	public static int pickFacility(float default_likelihood, String state, float amount, float interest_rate) {
-		
-		Connection c = null;
-		int facility_id = 0;
-		
-		//--Pick the first available facility	
-		StringBuilder sb = new StringBuilder();
-		sb.append(" select 	a.id as facility_id, a.amount as amount, a.interest_rate as facility_interest_rate, a.expected_yield as expected_yield ");
-		sb.append(" from facilities a, banks b, covenants c WHERE ");
-		sb.append(" a.bank_id = b.id 	");
-		sb.append(" AND a.bank_id = c.bank_id "); 
-		sb.append(" AND a.id = c.facility_id "); 
-		sb.append(" AND c.max_default_likelihood >= ? ");  	//--default_likelihood should be lower than facility's max_default_likelihood
-		sb.append(" AND c.banned_state<>?  ");				//--state should not be banned_state
-		sb.append(" AND a.amount >= ?  ");					//--amount should be lower than facility amount
-		sb.append(" AND a.interest_rate <=? "); 			
-		sb.append(" ORDER BY a.amount, a.interest_rate ");	
-		
-		try{
-			
-			c = DbUtil.getConnection();
-			PreparedStatement stmt = c.prepareStatement(sb.toString());
-			stmt.setFloat(1, default_likelihood);
-			stmt.setString(2, state);
-			stmt.setFloat(3, amount);
-			stmt.setFloat(4, interest_rate);
-			ResultSet rs = stmt.executeQuery();
-			
-			String sql = "UPDATE facilities SET amount = ?, expected_yield = ? WHERE id =?";
-			PreparedStatement stmt2 = c.prepareStatement(sql);
-			
-			while (rs.next()) {
-				
-				facility_id = rs.getInt("facility_id");
-	            float facility_interest_rate = rs.getFloat("facility_interest_rate");
-	            float newAmountAvail = rs.getFloat("amount") - amount;
-	            float expectedYield = rs.getFloat("expected_yield");
-	            float new_yield = getYield(default_likelihood, interest_rate, amount, facility_interest_rate, expectedYield);
-	            
-	            stmt2.setFloat(1, newAmountAvail);
-	            stmt2.setFloat(2, new_yield);
-	            stmt2.setFloat(3, facility_id);
-	            stmt2.executeUpdate();
-			}
-			
-			
-		} catch (SQLException e) {
-			System.err.println("Error in pickFacility:: "+e);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if(c != null)
-					c.close();
-			} catch(SQLException e){}
-			
-		} 
-		return facility_id;
 	
-	}
-	
-	
-	private static float getYield(float default_likelihood, float interest_rate, float amount, float facility_interest_rate, float expected_yield) {
-        return expected_yield + (1 - default_likelihood) * interest_rate * amount - default_likelihood * amount - facility_interest_rate * amount;
-	}
-	
-	public static void getLoanInput() {
+public static void getLoanInput() {
 		
 		String fileName = DbUtil.PATH + "loans.csv";
 		final String FILE_HEADER = "loan_id,facility_id";
@@ -179,6 +114,75 @@ public class LoanApp {
 		} 
 		
 	}
+	
+	
+	public static int pickFacility(float default_likelihood, String state, float amount, float interest_rate) {
+		
+		Connection c = null;
+		int facility_id = 0;
+		
+		//--Pick the first available facility	
+		StringBuilder sb = new StringBuilder();
+		sb.append(" select 	a.id as facility_id, a.amount as amount, a.interest_rate as facility_interest_rate, a.expected_yield as expected_yield ");
+		sb.append(" from facilities a, banks b, covenants c WHERE ");
+		sb.append(" a.bank_id = b.id 	");
+		sb.append(" AND a.bank_id = c.bank_id "); 
+		sb.append(" AND a.id = c.facility_id "); 
+		sb.append(" AND c.max_default_likelihood >= ? ");  	//--default_likelihood should be lower than facility's max_default_likelihood
+		sb.append(" AND c.banned_state<>?  ");				//--state should not be banned_state
+		sb.append(" AND a.amount >= ?  ");					//--amount should be lower than facility amount
+		sb.append(" AND a.interest_rate <=? "); 			
+		sb.append(" ORDER BY a.amount, a.interest_rate ");	
+		
+		try{
+			
+			c = DbUtil.getConnection();
+			PreparedStatement stmt = c.prepareStatement(sb.toString());
+			stmt.setFloat(1, default_likelihood);
+			stmt.setString(2, state);
+			stmt.setFloat(3, amount);
+			stmt.setFloat(4, interest_rate);
+			ResultSet rs = stmt.executeQuery();
+			
+			String sql = "UPDATE facilities SET amount = ?, expected_yield = ? WHERE id =?";
+			PreparedStatement stmt2 = c.prepareStatement(sql);
+			
+			while (rs.next()) {
+				
+				facility_id = rs.getInt("facility_id");
+	            float facility_interest_rate = rs.getFloat("facility_interest_rate");
+	            float newAmountAvail = rs.getFloat("amount") - amount;
+	            float expectedYield = rs.getFloat("expected_yield");
+	            float new_yield = getYield(default_likelihood, interest_rate, amount, facility_interest_rate, expectedYield);
+	            
+	            stmt2.setFloat(1, newAmountAvail);
+	            stmt2.setFloat(2, new_yield);
+	            stmt2.setFloat(3, facility_id);
+	            stmt2.executeUpdate();
+			}
+			
+			
+		} catch (SQLException e) {
+			System.err.println("Error in pickFacility:: "+e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(c != null)
+					c.close();
+			} catch(SQLException e){}
+			
+		} 
+		return facility_id;
+	
+	}
+	
+	
+	private static float getYield(float default_likelihood, float interest_rate, float amount, float facility_interest_rate, float expected_yield) {
+        return expected_yield + (1 - default_likelihood) * interest_rate * amount - default_likelihood * amount - facility_interest_rate * amount;
+	}
+	
+	
 	
 	
 	public static void writeYield() {
