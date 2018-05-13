@@ -33,7 +33,7 @@ public class LoanApp {
 	}
 	
 	
-public static void getLoanInput() {
+	public static void getLoanInput() {
 		
 		String fileName = DbUtil.PATH + "loans.csv";
 		final String FILE_HEADER = "loan_id,facility_id";
