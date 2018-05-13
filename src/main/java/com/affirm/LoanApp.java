@@ -11,7 +11,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
-import com.affirm.bean.Bank;
+
+/**
+ * @author Prashant Rai
+ *
+ */
 
 public class LoanApp {
 
@@ -20,18 +24,13 @@ public class LoanApp {
 	private static final String NEW_LINE_SEPARATOR = "\n";
 	
 	public static void main(String[] args) throws IOException {
-		//DbUtil.initDB();
-		getLoanInput();
-		writeYield();
+		System.out.println("Loan assignment initiated...");
+		//DbUtil.initDB(); //-to initialize DB (load data)
+		getLoanInput(); //--take input and generates assignment.csv
+		writeYield(); //--calculates and generates yields.csv
 		
+		System.out.println("Loan assignment completed.");
 	}
-	
-	
-	public static void processLoans() {
-		
-	}
-	
-	
 	
 	public static int pickFacility(float default_likelihood, String state, float amount, float interest_rate) {
 		
@@ -42,8 +41,8 @@ public class LoanApp {
 		 * 3. amount should be lower than facility amount
 		 * 4. order by facility amount and interest rate
 		 * 
-		 * to pick the first facility available (TODO: make this more intelligent)
-		 * */
+		 * to pick the first facility available		 
+		 * * */
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(" select 	a.id as facility_id, a.amount as amount, a.interest_rate as facility_interest_rate, a.expected_yield as expected_yield ");
@@ -71,10 +70,8 @@ public class LoanApp {
 			stmt.setFloat(4, interest_rate);
 			ResultSet rs = stmt.executeQuery();
 			
-			
 			String sql = "UPDATE facilities set amount = ?, expected_yield = ? where id =?";
 			PreparedStatement stmt2 = c.prepareStatement(sql);
-			
 			
 			while (rs.next()) {
 				
@@ -108,7 +105,7 @@ public class LoanApp {
 	}
 	
 	
-	public static float getYield(float default_likelihood, float interest_rate, float amount, float facility_interest_rate, float expected_yield) {
+	private static float getYield(float default_likelihood, float interest_rate, float amount, float facility_interest_rate, float expected_yield) {
         return expected_yield + (1 - default_likelihood) * interest_rate * amount - default_likelihood * amount - facility_interest_rate * amount;
 	}
 	
@@ -124,9 +121,6 @@ public class LoanApp {
 		String line = null;
 		Scanner scanner = null;
 		int index = 0;
-		
-		Connection c = null;
-		PreparedStatement stmt = null;
 		
 		try{
 			reader = new BufferedReader(new FileReader(fileName));
@@ -145,10 +139,8 @@ public class LoanApp {
 					continue;
 				}
 				
-				Bank bank = new Bank();
 				scanner = new Scanner(line);
 				scanner.useDelimiter(",");
-				
 				
 				float interest_rate = 0;
 				float amount = 0;
@@ -177,7 +169,7 @@ public class LoanApp {
 				index = 0;
 				
 				int facilityId = pickFacility(default_likelihood, state, amount, interest_rate);
-                System.out.println(">>>>>>>>Result:: "+facilityId);
+                //System.out.println(">>>>>>>>Result:: "+facilityId);
 				
                 fileWriter.append(String.valueOf(id));
                 fileWriter.append(COMMA_DELIMITER);
