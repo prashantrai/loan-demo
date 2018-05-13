@@ -21,7 +21,8 @@ import com.affirm.bean.Facilities;
  */
 public class DbUtil {
 	
-	public static final String PATH = "/Users/prash/Documents/MyWorkspace/affirm/files/";
+//	public static final String PATH = "/Users/prash/Documents/MyWorkspace/affirm/files/";
+	public static final String PATH = "/Users/prash/Documents/MyWorkspace/affirm/files/large/";
 	
 	private static final String SQL_FACILILTY = "INSERT INTO facilities (id, interest_rate, amount, bank_id, expected_yield) " + "VALUES (?,?,?,?,?);";
 	private static final String SQL_CONVENANTS = "INSERT INTO covenants (facility_id, max_default_likelihood, bank_id, banned_state) " + "VALUES (?,?,?,?);";
