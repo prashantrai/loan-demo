@@ -1,6 +1,8 @@
 package com.affirm.bean;
 
-public class Loans {
+import java.io.Serializable;
+
+public class Loans implements Serializable{
 
 	private int id;
 	private float interestRate;
@@ -36,6 +38,11 @@ public class Loans {
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	@Override
+	public String toString() {
+		return "Loans [id=" + id + ", interestRate=" + interestRate + ", amt=" + amt + ", defaultLikelyhood="
+				+ defaultLikelyhood + ", state=" + state + "]";
 	}
 	
 	

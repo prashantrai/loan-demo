@@ -1,6 +1,8 @@
 package com.affirm.bean;
 
-public class Bank {
+import java.io.Serializable;
+
+public class Bank implements Serializable{
 	private int id;
 	private String name;
 	public int getId() {
@@ -14,6 +16,10 @@ public class Bank {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return "Bank [id=" + id + ", name=" + name + "]";
 	}
 	
 }

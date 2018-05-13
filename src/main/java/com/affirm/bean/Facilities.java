@@ -1,6 +1,8 @@
 package com.affirm.bean;
 
-public class Facilities {
+import java.io.Serializable;
+
+public class Facilities implements Serializable{
 	private int id;
 	private float amt;
 	private float interestRate;
@@ -29,10 +31,10 @@ public class Facilities {
 	public void setBank_id(int bank_id) {
 		this.bank_id = bank_id;
 	}
-	
+	@Override
 	public String toString() {
-		
-		return "("+ "id="+id + ", amt="+ amt + ", interestRate="+interestRate + ", bank_id="+bank_id + ")";
+		return "Facilities [id=" + id + ", amt=" + amt + ", interestRate=" + interestRate + ", bank_id=" + bank_id
+				+ "]";
 	}
 	
 }

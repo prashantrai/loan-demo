@@ -1,6 +1,8 @@
 package com.affirm.bean;
 
-public class Covenants {
+import java.io.Serializable;
+
+public class Covenants implements Serializable{
 	private int facilityId;
 	private float maxDefault;
 	private int bankId;
@@ -28,6 +30,11 @@ public class Covenants {
 	}
 	public void setBannedState(String bannedState) {
 		this.bannedState = bannedState;
+	}
+	@Override
+	public String toString() {
+		return "Covenants [facilityId=" + facilityId + ", maxDefault=" + maxDefault + ", bankId=" + bankId
+				+ ", bannedState=" + bannedState + "]";
 	}
 	
 }
